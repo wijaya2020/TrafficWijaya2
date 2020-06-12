@@ -16,7 +16,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="紅綠燈(作者：靜宜大學資管系楊子青)"
+        android:text="紅綠燈(作者：靜宜大學資管系tcyang)"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
