@@ -11,12 +11,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.2"  />
+        app:layout_constraintGuide_percent="0.2" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="紅綠燈(作者：靜宜大學資管系tcyang)"
+        android:text="紅綠燈(作者：魏清昊)"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -38,9 +38,9 @@
         android:text="開始遊戲"
         android:textSize="24sp"
         app:layout_constraintBottom_toTopOf="@+id/gl2"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/btnEnd"
-        app:layout_constraintHorizontal_chainStyle="packed"/>
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btnEnd"
@@ -52,6 +52,45 @@
         app:layout_constraintBottom_toTopOf="@+id/gl2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnStart" />
+
+    <android.support.constraint.Guideline
+        android:id="@+id/gl3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.45" />
+
+
+    <EditText
+        android:id="@+id/editTextGreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="請輸入綠燈秒數"
+        android:inputType="number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/editTextYellow"
+        app:layout_constraintTop_toTopOf="@+id/gl3"
+        app:layout_constraintHorizontal_chainStyle="spread"/>
+
+    <EditText
+        android:id="@+id/editTextYellow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="請輸入黃燈秒數"
+        android:inputType="number"
+        app:layout_constraintStart_toEndOf="@+id/editTextGreen"
+        app:layout_constraintEnd_toStartOf="@+id/editTextRed"
+        app:layout_constraintTop_toTopOf="@+id/gl3" />
+
+    <EditText
+        android:id="@+id/editTextRed"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="請輸入紅燈秒數"
+        android:inputType="number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/editTextYellow"
+        app:layout_constraintTop_toTopOf="@+id/gl3" />
 
 
 </android.support.constraint.ConstraintLayout>

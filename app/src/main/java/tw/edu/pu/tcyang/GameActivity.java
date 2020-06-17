@@ -1,5 +1,6 @@
 package tw.edu.pu.tcyang;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.Canvas;
 import android.os.Handler;
@@ -34,7 +35,12 @@ public class GameActivity extends AppCompatActivity {
 
         GameSV = (GameSurfaceView) findViewById(R.id.GameSV);
         //設定初始測試之燈號秒數
-        GameSV.SetLightSec(6,2,3);
+        //GameSV.SetLightSec(6,2,3);
+        //讀取使用者輸入之燈號秒數
+        Intent it = getIntent();
+        GameSV.SetLightSec(it.getIntExtra("SecG",0),
+                it.getIntExtra("SecY",0),
+                it.getIntExtra("SecR",0));
 
         handler= new Handler();
     }
