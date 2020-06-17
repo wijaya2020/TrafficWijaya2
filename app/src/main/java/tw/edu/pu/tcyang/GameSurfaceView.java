@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -24,7 +25,8 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
     Rect SrcRect, DestRect; //繪圖所需長方形
     float ratio, w, h; //比例及寬度與長度
 
-    int step = 1; //步數
+    int step = 1, score = 0; //步數,分數
+
 
 
     public GameSurfaceView(Context context, AttributeSet attrs) {
@@ -35,6 +37,10 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         Road = BitmapFactory.decodeResource(getResources(), R.drawable.road);
         Boy = BitmapFactory.decodeResource(getResources(), R.drawable.boy1);
         paint = new Paint();
+
+        //啟動燈號倒數
+        handlerLight = new Handler();
+        handlerLight.post(runnableLight);
     }
 
     @Override
@@ -51,7 +57,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-
+        handlerLight.removeCallbacks(runnableLight);  //銷毀燈號倒數執行緒
     }
 
     public void drawSomething(Canvas canvas) {
@@ -95,6 +101,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
             step++;
             if (step>8){
                 step = 1;
+                score++;
             }
             int res = getResources().getIdentifier("boy" + (step), "drawable", getContext().getPackageName());
             Boy = BitmapFactory.decodeResource(getResources(), res);
@@ -114,7 +121,7 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         paint.setStyle(Paint.Style.FILL);
         paint.setTextSize((int) 60 * canvas.getHeight() / 1080);
         paint.setAntiAlias(true);
-        canvas.drawText("圖片編號：" + String.valueOf(step), (int) (0), (int) (canvas.getHeight()*0.1) ,paint);
+        canvas.drawText("圖片編號：" + String.valueOf(step)+ "，分數：" + String.valueOf(score), (int) (0), (int) (canvas.getHeight()*0.1) ,paint);
     }
 
     //紅綠燈繪製
@@ -149,15 +156,69 @@ public class GameSurfaceView extends SurfaceView implements SurfaceHolder.Callba
         canvas.drawText(String.valueOf(GreenLightSec), canvas.getWidth() - 1.5f *r, 5.5f * r + 10 , paint);
         canvas.drawText(String.valueOf(YellowLightSec), canvas.getWidth() - 1.5f *r, 3.5f * r + 5 , paint);
         canvas.drawText(String.valueOf(RedLightSec), canvas.getWidth() - 1.5f *r, 1.5f * r  , paint);
+
+        //根據燈號顯示實心圓及剩餘秒數
+        paint.setStyle(Paint.Style.FILL_AND_STROKE);
+        paint.setTextSize(r);
+        if (CurrentLight == "Green"){
+            paint.setColor(Color.GREEN);
+            canvas.drawCircle(canvas.getWidth() - r -8, 5*r+20, r, paint);
+            paint.setColor(Color.BLUE);
+            canvas.drawText(String.valueOf(CurrentCountDown), canvas.getWidth() - 1.5f *r, 5.5f * r + 10 , paint);
+        }
+        else if (CurrentLight == "Yellow"){
+            paint.setColor(Color.YELLOW);
+            canvas.drawCircle(canvas.getWidth() - r -8, 3*r+10, r, paint);
+            paint.setColor(Color.BLUE);
+            canvas.drawText(String.valueOf(CurrentCountDown), canvas.getWidth() - 1.5f *r, 3.5f * r + 5 , paint);
+        }
+        else{
+            paint.setColor(Color.RED);
+            canvas.drawCircle(canvas.getWidth() - r -8, r, r, paint);
+            paint.setColor(Color.BLUE);
+            canvas.drawText(String.valueOf(CurrentCountDown), canvas.getWidth() - 1.5f *r, 1.5f * r  , paint);
+        }
+
     }
 
+    String CurrentLight; //目前燈號
+    int CurrentCountDown; //目前燈號剩餘秒數
 
     //初始設定各燈號秒數
     public void SetLightSec(int GreenSec, int YellowSec, int RedSec){
         GreenLightSec = GreenSec;
         YellowLightSec = YellowSec;
         RedLightSec = RedSec;
+        CurrentLight = "Yellow";
+        CurrentCountDown = YellowLightSec + 1; //因為一開始執行就會-1
     }
 
+    Handler handlerLight;
+    //控制燈號倒數
+    Runnable runnableLight = new Runnable() {
+        @Override
+        public void run() {
+            CurrentCountDown--;
+            if (CurrentCountDown == -1){
+                if (CurrentLight == "Green"){
+                    CurrentLight = "Yellow";
+                    CurrentCountDown = YellowLightSec;
+                }
+                else if (CurrentLight == "Yellow"){
+                    CurrentLight = "Red";
+                    CurrentCountDown = RedLightSec;
+                }
+                else{
+                    CurrentLight = "Green";
+                    CurrentCountDown = GreenLightSec;
+                }
+            }
+            //畫面重繪
+            Canvas canvas = surfaceHolder.lockCanvas(null);
+            drawSomething(canvas);
+            surfaceHolder.unlockCanvasAndPost(canvas);
 
+            handlerLight.postDelayed(runnableLight, 1000);
+        }
+    };
 }

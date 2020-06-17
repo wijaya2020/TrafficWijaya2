@@ -18,6 +18,8 @@ public class GameActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
         //設定全螢幕顯示
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -46,16 +48,30 @@ public class GameActivity extends AppCompatActivity {
     }
 
 
+    float LastX, CurrentX;  //手指觸控X座標
+
     //利用手指觸控，控制小男孩走路
     public boolean onTouchEvent (MotionEvent event){
         if (event.getAction() == MotionEvent.ACTION_DOWN){
-            GameSV.BoyMoving = true;
+            //GameSV.BoyMoving = true;
+            LastX = event.getX();
             handler.post(runnable);
         }
         else if (event.getAction() == MotionEvent.ACTION_UP){
             GameSV.BoyMoving =  false;
             handler.removeCallbacks(runnable);  //銷毀執行緒
         }
+        else if (event.getAction() == MotionEvent.ACTION_MOVE){
+            CurrentX = event.getX();
+            if (CurrentX>LastX){
+                GameSV.BoyMoving = true;
+            }
+            else{
+                GameSV.BoyMoving =  false;
+            }
+            LastX = CurrentX;
+        }
+
         return true;
     }
 
